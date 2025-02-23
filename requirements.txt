@@ -3,3 +3,5 @@ pytest
 pyyaml
 pandas
 numpy
+pytest-html
+allure-pytest
