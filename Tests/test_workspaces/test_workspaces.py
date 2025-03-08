@@ -3,6 +3,10 @@ import sys
 import allure
 import pytest
 import requests,json
+from numpy.matlib import empty
+
+from Tests.conftest import get_workspace_Id
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../utils')))
 from API_Modules.api_workspaces  import methods_workspaces
 from utils.file_utils import get_test_data_file
@@ -11,24 +15,11 @@ from utils.file_utils import get_test_case_data
 @allure.title("Get All WorkSapce")
 @allure.description("This test case return all the workspaces")
 @allure.severity(allure.severity_level.NORMAL)
-@pytest.mark.parametrize("test_data",get_test_case_data(get_test_data_file('test_data.xlsx'),"workSpace_data",test_case_name="TC1"))
-def test_get_all_workspaces(test_data):
-    url = test_data["url"]
-    endpoints=test_data["endpoint"]
-    method = test_data["method"]
+@pytest.mark.parametrize("test_data", get_test_case_data(get_test_data_file('test_data.xlsx'), "workSpace_data", test_case_name="TC1"))
+def test_get_all_workspaces(test_data, get_workspace_Id):
+    workspace_id=pytest.workspace_gid
+    print(workspace_id)
 
-    response = methods_workspaces.get_workspaces(method,url,endpoints)
-    print(response.status_code)
-    assert response.status_code==200
-    print(response.json())
-    data=response.json()
-    assert "data" in data
-    pytest.workspace_gid=data['data'][0]['gid']
-    assert isinstance(data["data"],list)
-    for workspace in data["data"]:
-        assert "gid" in workspace
-        assert "name" in workspace
-        assert "resource_type" in workspace
 
 @allure.title("Get All WorkSapce With Limit")
 @allure.description("This test case return all the workspaces with Limit Filter")
@@ -39,7 +30,6 @@ def test_get_workspaces_with_limit(test_data):
     endpoints=test_data["endpoint"]
     limit=5
     response=methods_workspaces.get_workspace_with_limit(url=url,enidpoint=endpoints,limit=limit)
-    print(response.status_code)
     assert response.status_code==200
     data=response.json()
     assert "data" in data
@@ -55,11 +45,9 @@ def test_get_workspaces_with_invalid_limit(test_data):
     endpoints=test_data["endpoint"]
     limit="abc"
     response=methods_workspaces.get_workspace_with_limit(url=url,enidpoint=endpoints,limit=limit)
-    print(response.status_code)
     assert response.status_code==400
     data=response.json()
     assert "errors" in data
-    print(data)
 
 
 

@@ -1,6 +1,6 @@
 import configparser
 from pathlib import Path
-from file_utils import get_test_case_data
+
 
 
 cfgFile=('asanaqaenv.ini')
